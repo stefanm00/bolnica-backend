@@ -26,4 +26,16 @@ public class ArtiklService {
 	public List<Artikl> getArtiklsByNaziv(String naziv) {
 		return repo.findByNazivContainingIgnoreCase(naziv);
 	}
+	
+	public Artikl save(Artikl artikl) {
+		return repo.save(artikl);
+	}
+	
+	public boolean existById(Integer id) {
+		return repo.existsById(id);
+	}
+	
+	public void deleteById(Integer id) {
+		repo.deleteById(id);
+	}
 }
