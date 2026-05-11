@@ -24,6 +24,15 @@ public class PacijentController {
     public List<Pacijent> getAll() {
         return pacijentService.getPacijentRepository().findAll();
     }
+    @GetMapping("/pacijentByIme/{ime}")
+    public List<Pacijent> getByIme(@PathVariable String ime) {
+        return pacijentService.getPacijentRepository().findByImeContainingIgnoreCase(ime);
+    }
+
+    @GetMapping("/pacijentByPrezime/{prezime}")
+    public List<Pacijent> getByPrezime(@PathVariable String prezime) {
+        return pacijentService.getPacijentRepository().findByPrezimeContainingIgnoreCase(prezime);
+    }
 
     @PostMapping("/pacijent")
     public Pacijent addPacijent(@RequestBody Pacijent pacijent) {

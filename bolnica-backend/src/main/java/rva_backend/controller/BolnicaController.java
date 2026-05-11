@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import rva_backend.models.Bolnica;
 import rva_backend.service.BolnicaService;
@@ -23,6 +24,10 @@ public class BolnicaController {
     @GetMapping("/bolnica")
     public List<Bolnica> getAll() {
         return bolnicaService.getBolnicaRepository().findAll();
+    }
+    @GetMapping("/bolnicaByNaziv/{naziv}")
+    public List<Bolnica> getByNaziv(@PathVariable String naziv) {
+        return bolnicaService.getBolnicaRepository().findByNazivContainingIgnoreCase(naziv);
     }
 
     @PostMapping("/bolnica")

@@ -24,6 +24,15 @@ public class OdeljenjeController {
     public List<Odeljenje> getAll() {
         return odeljenjeService.getOdeljenjeRepository().findAll();
     }
+    @GetMapping("/odeljenjeByNaziv/{naziv}")
+    public List<Odeljenje> getByNaziv(@PathVariable String naziv) {
+        return odeljenjeService.getOdeljenjeRepository().findByNazivContainingIgnoreCase(naziv);
+    }
+
+    @GetMapping("/odeljenjeByLokacija/{lokacija}")
+    public List<Odeljenje> getByLokacija(@PathVariable String lokacija) {
+        return odeljenjeService.getOdeljenjeRepository().findByLokacijaContainingIgnoreCase(lokacija);
+    }
 
     @PostMapping("/odeljenje")
     public Odeljenje addOdeljenje(@RequestBody Odeljenje odeljenje) {

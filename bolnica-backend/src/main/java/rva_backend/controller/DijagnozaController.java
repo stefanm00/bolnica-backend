@@ -24,6 +24,15 @@ public class DijagnozaController {
     public List<Dijagnoza> getAll() {
         return dijagnozaService.getDijagnozaRepository().findAll();
     }
+    @GetMapping("/dijagnozaByNaziv/{naziv}")
+    public List<Dijagnoza> getByNaziv(@PathVariable String naziv) {
+        return dijagnozaService.getDijagnozaRepository().findByNazivContainingIgnoreCase(naziv);
+    }
+
+    @GetMapping("/dijagnozaByOznaka/{oznaka}")
+    public List<Dijagnoza> getByOznaka(@PathVariable String oznaka) {
+        return dijagnozaService.getDijagnozaRepository().findByOznakaContainingIgnoreCase(oznaka);
+    }
 
     @PostMapping("/dijagnoza")
     public Dijagnoza addDijagnoza(@RequestBody Dijagnoza dijagnoza) {
