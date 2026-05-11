@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 
 import rva_backend.models.Pacijent;
 import rva_backend.service.PacijentService;
@@ -31,5 +32,9 @@ public class PacijentController {
     @DeleteMapping("/pacijent/{id}")
     public void deletePacijent(@PathVariable Integer id) {
         pacijentService.getPacijentRepository().deleteById(id);
+    }
+    @PutMapping("/pacijent")
+    public Pacijent updatePacijent(@RequestBody Pacijent pacijent) {
+        return pacijentService.getPacijentRepository().save(pacijent);
     }
 }

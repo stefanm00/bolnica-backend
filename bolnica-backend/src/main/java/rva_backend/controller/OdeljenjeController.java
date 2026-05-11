@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 
 import rva_backend.models.Odeljenje;
 import rva_backend.service.OdeljenjeService;
@@ -31,5 +32,9 @@ public class OdeljenjeController {
     @DeleteMapping("/odeljenje/{id}")
     public void deleteOdeljenje(@PathVariable Integer id) {
         odeljenjeService.getOdeljenjeRepository().deleteById(id);
+    }
+    @PutMapping("/odeljenje")
+    public Odeljenje updateOdeljenje(@RequestBody Odeljenje odeljenje) {
+        return odeljenjeService.getOdeljenjeRepository().save(odeljenje);
     }
 }

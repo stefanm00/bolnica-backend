@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 
 import rva_backend.models.Dijagnoza;
 import rva_backend.service.DijagnozaService;
@@ -31,5 +32,9 @@ public class DijagnozaController {
     @DeleteMapping("/dijagnoza/{id}")
     public void deleteDijagnoza(@PathVariable Integer id) {
         dijagnozaService.getDijagnozaRepository().deleteById(id);
+    }
+    @PutMapping("/dijagnoza")
+    public Dijagnoza updateDijagnoza(@RequestBody Dijagnoza dijagnoza) {
+        return dijagnozaService.getDijagnozaRepository().save(dijagnoza);
     }
 }
