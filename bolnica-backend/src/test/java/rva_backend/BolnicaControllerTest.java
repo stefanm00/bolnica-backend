@@ -63,7 +63,7 @@ class BolnicaControllerTest {
 
     @Test
     @Order(3)
-    /*
+    
     void getOne() {
         ResponseEntity<Bolnica> response =
                 template.getForEntity(apiUrl() + "/" + newId, Bolnica.class);
@@ -71,11 +71,10 @@ class BolnicaControllerTest {
         assertEquals(200, response.getStatusCode().value());
         assertNotNull(response.getBody());
     }
-*/ 
     
     @Test
     @Order(4) 
-    /*
+    
     void getByNaziv() {
         ResponseEntity<List<Bolnica>> response =
                 template.exchange(apiUrl() + "/naziv/TEST",
@@ -86,7 +85,7 @@ class BolnicaControllerTest {
         assertEquals(200, response.getStatusCode().value());
         assertNotNull(response.getBody());
     }
-*/
+
     
     @Test
     @Order(5)
