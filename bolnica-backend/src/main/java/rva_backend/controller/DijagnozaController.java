@@ -1,15 +1,13 @@
 package rva_backend.controller;
 
+import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import rva_backend.models.Dijagnoza;
 import rva_backend.service.DijagnozaService;
@@ -18,32 +16,58 @@ import rva_backend.service.DijagnozaService;
 public class DijagnozaController {
 
     @Autowired
-    private DijagnozaService dijagnozaService;
+    private DijagnozaService service;
 
     @GetMapping("/dijagnoza")
-    public List<Dijagnoza> getAll() {
-        return dijagnozaService.getDijagnozaRepository().findAll();
-    }
-    @GetMapping("/dijagnozaByNaziv/{naziv}")
-    public List<Dijagnoza> getByNaziv(@PathVariable String naziv) {
-        return dijagnozaService.getDijagnozaRepository().findByNazivContainingIgnoreCase(naziv);
+    public ResponseEntity<List<Dijagnoza>> getAll() {
+        return new ResponseEntity<>(service.getAll(), HttpStatus.OK);
     }
 
-    @GetMapping("/dijagnozaByOznaka/{oznaka}")
-    public List<Dijagnoza> getByOznaka(@PathVariable String oznaka) {
-        return dijagnozaService.getDijagnozaRepository().findByOznakaContainingIgnoreCase(oznaka);
+    @GetMapping("/dijagnoza/{id}")
+    public ResponseEntity<Dijagnoza> getOne(@PathVariable Integer id) {
+        Optional<Dijagnoza> dijagnoza = service.findById(id);
+
+        if (dijagnoza.isPresent()) {
+            return new ResponseEntity<>(dijagnoza.get(), HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping("/dijagnoza/naziv/{naziv}")
+    public ResponseEntity<List<Dijagnoza>> getByNaziv(@PathVariable String naziv) {
+        return new ResponseEntity<>(service.findByNaziv(naziv), HttpStatus.OK);
+    }
+
+    @GetMapping("/dijagnoza/oznaka/{oznaka}")
+    public ResponseEntity<List<Dijagnoza>> getByOznaka(@PathVariable String oznaka) {
+        return new ResponseEntity<>(service.findByOznaka(oznaka), HttpStatus.OK);
     }
 
     @PostMapping("/dijagnoza")
-    public Dijagnoza addDijagnoza(@RequestBody Dijagnoza dijagnoza) {
-        return dijagnozaService.getDijagnozaRepository().save(dijagnoza);
+    public ResponseEntity<Dijagnoza> add(@RequestBody Dijagnoza dijagnoza) {
+        Dijagnoza saved = service.save(dijagnoza);
+        URI location = URI.create("/dijagnoza/" + saved.getId());
+        return ResponseEntity.created(location).body(saved);
     }
+
+    @PutMapping("/dijagnoza/{id}")
+    public ResponseEntity<Dijagnoza> update(@RequestBody Dijagnoza dijagnoza, @PathVariable Integer id) {
+        if (service.existsById(id)) {
+            dijagnoza.setId(id);
+            return ResponseEntity.ok(service.save(dijagnoza));
+        }
+
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
     @DeleteMapping("/dijagnoza/{id}")
-    public void deleteDijagnoza(@PathVariable Integer id) {
-        dijagnozaService.getDijagnozaRepository().deleteById(id);
-    }
-    @PutMapping("/dijagnoza")
-    public Dijagnoza updateDijagnoza(@RequestBody Dijagnoza dijagnoza) {
-        return dijagnozaService.getDijagnozaRepository().save(dijagnoza);
+    public ResponseEntity<Void> delete(@PathVariable Integer id) {
+        if (service.existsById(id)) {
+            service.deleteById(id);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }

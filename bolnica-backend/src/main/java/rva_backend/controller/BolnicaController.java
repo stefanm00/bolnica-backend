@@ -1,16 +1,13 @@
 package rva_backend.controller;
 
+import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import rva_backend.models.Bolnica;
 import rva_backend.service.BolnicaService;
@@ -19,28 +16,53 @@ import rva_backend.service.BolnicaService;
 public class BolnicaController {
 
     @Autowired
-    private BolnicaService bolnicaService;
+    private BolnicaService service;
 
     @GetMapping("/bolnica")
-    public List<Bolnica> getAll() {
-        return bolnicaService.getBolnicaRepository().findAll();
+    public ResponseEntity<List<Bolnica>> getAll() {
+        return new ResponseEntity<>(service.getAll(), HttpStatus.OK);
     }
-    @GetMapping("/bolnicaByNaziv/{naziv}")
-    public List<Bolnica> getByNaziv(@PathVariable String naziv) {
-        return bolnicaService.getBolnicaRepository().findByNazivContainingIgnoreCase(naziv);
+
+    @GetMapping("/bolnica/{id}")
+    public ResponseEntity<Bolnica> getOne(@PathVariable Integer id) {
+        Optional<Bolnica> bolnica = service.findById(id);
+
+        if (bolnica.isPresent()) {
+            return new ResponseEntity<>(bolnica.get(), HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping("/bolnica/naziv/{naziv}")
+    public ResponseEntity<List<Bolnica>> getByNaziv(@PathVariable String naziv) {
+        return new ResponseEntity<>(service.findByNaziv(naziv), HttpStatus.OK);
     }
 
     @PostMapping("/bolnica")
-    public Bolnica addBolnica(@RequestBody Bolnica bolnica) {
-        return bolnicaService.getBolnicaRepository().save(bolnica);
+    public ResponseEntity<Bolnica> add(@RequestBody Bolnica bolnica) {
+        Bolnica saved = service.save(bolnica);
+        URI location = URI.create("/bolnica/" + saved.getId());
+        return ResponseEntity.created(location).body(saved);
     }
-        @DeleteMapping("/bolnica/{id}")
-        public void deleteBolnica(@PathVariable Integer id) {
-            bolnicaService.getBolnicaRepository().deleteById(id);
-        
-    }
-        @PutMapping("/bolnica")
-        public Bolnica updateBolnica(@RequestBody Bolnica bolnica) {
-            return bolnicaService.getBolnicaRepository().save(bolnica);
+
+    @PutMapping("/bolnica/{id}")
+    public ResponseEntity<Bolnica> update(@RequestBody Bolnica bolnica, @PathVariable Integer id) {
+        if (service.existsById(id)) {
+            bolnica.setId(id);
+            return ResponseEntity.ok(service.save(bolnica));
         }
+
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @DeleteMapping("/bolnica/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Integer id) {
+        if (service.existsById(id)) {
+            service.deleteById(id);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
 }
